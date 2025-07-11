@@ -52,4 +52,4 @@ config checkout
 config config status.showUntrackedFiles no
 ```
 
-> Reference: [Guide](https://www.atlassian.com/git/tutorials/dotfiles)
+> Reference: [Dotfiles: Best way to store in a bare git repository](https://www.atlassian.com/git/tutorials/dotfiles)
