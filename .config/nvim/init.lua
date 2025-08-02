@@ -1,6 +1,6 @@
--- ╭──────────────────────────────────────────────╮
--- │                 Plugins                      │
--- ╰──────────────────────────────────────────────╯
+--╭──────────────────────────────────────────────╮
+--│                 Plugins                      │
+--╰──────────────────────────────────────────────╯
 vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
@@ -21,9 +21,9 @@ require("bufferline").setup()
 require("lualine").setup()
 require("mason").setup()
 
--- ╭──────────────────────────────────────────────╮
--- │                 Options                      │
--- ╰──────────────────────────────────────────────╯
+--╭──────────────────────────────────────────────╮
+--│                 Options                      │
+--╰──────────────────────────────────────────────╯
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.signcolumn = "yes"
@@ -36,9 +36,9 @@ vim.o.winborder = "rounded"
 vim.o.clipboard = "unnamedplus"
 -- vim.o.cmdheight = 0
 
--- ╭──────────────────────────────────────────────╮
--- │                 Keymaps                      │
--- ╰──────────────────────────────────────────────╯
+--╭──────────────────────────────────────────────╮
+--│                 Keymaps                      │
+--╰──────────────────────────────────────────────╯
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
@@ -46,6 +46,13 @@ map('n', '<leader>o', ':update<cr> :source<cr>')
 map('n', '<leader>w', ':write<cr>')
 map('n', '<leader>q', ':quit<cr>')
 
+-- Keep search results in center
+map("n", "n", "nzzzv", opts)
+map("n", "N", "Nzzzv", opts)
+
+-- Keep cursor centered when scrolling
+map("n", "<C-d>", "<C-d>zz", opts)
+map("n", "<C-u>", "<C-u>zz", opts)
 -- move lines up or down
 map('n', '<A-k>', ":m .-2<CR>==")
 map('i', '<A-k>', "<esc>:m .-2<CR>==gi")
@@ -84,9 +91,9 @@ map("n", "<c-h>", function()
 	vim.cmd(cmd)
 end, { desc = "find and replace a word" })
 
--- ╭──────────────────────────────────────────────╮
--- │                 Autocmds                     │
--- ╰──────────────────────────────────────────────╯
+--╭──────────────────────────────────────────────╮
+--│                 Autocmds                     │
+--╰──────────────────────────────────────────────╯
 vim.api.nvim_create_autocmd('lspattach', {
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -101,10 +108,18 @@ vim.cmd(":hi statusline guibg=none")
 
 vim.lsp.enable({ "lua_ls", "biome", "tinymist", "emmetls" })
 
-
--- ╭──────────────────────────────────────────────╮
--- │         Helper: Highlight Function           │
--- ╰──────────────────────────────────────────────╯
+vim.api.nvim_create_autocmd("TextYankPost", {
+	pattern = "*",
+	callback = function()
+		vim.highlight.on_yank({
+			higroup = "YankHighlight",
+			timeout = 200,
+		})
+	end,
+})
+--╭──────────────────────────────────────────────╮
+--│         Helper: Highlight Function           │
+--╰──────────────────────────────────────────────╯
 
 local function highlight(group, opts)
 	vim.api.nvim_set_hl(0, group, opts)
@@ -118,3 +133,9 @@ highlight("Comment", { fg = "#5c6370", italic = true })
 
 -- Set normal text color
 highlight("Normal", { fg = "#c0caf5", bg = "#1a1b26" })
+
+highlight("YankHighlight", { bg = "#2d3149", })
+vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
+
+--╭──────────────────────────────────────────────╮
+--╰──────────────────────────────────────────────╯
