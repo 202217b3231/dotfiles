@@ -1,3 +1,6 @@
+-- ╭──────────────────────────────────────────────╮
+-- │                 Plugins                      │
+-- ╰──────────────────────────────────────────────╯
 vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
@@ -10,6 +13,17 @@ vim.pack.add({
 	{ src = "https://github.com/williamboman/mason.nvim" },
 })
 
+require("nvim-treesitter.configs").setup({ ensure_installed = { "svelte", "typescript", "javascript" }, highlight = { enable = true } })
+require("vague").setup({ transparent = true })
+require("mini.pick").setup()
+require("oil").setup()
+require("bufferline").setup()
+require("lualine").setup()
+require("mason").setup()
+
+-- ╭──────────────────────────────────────────────╮
+-- │                 Options                      │
+-- ╰──────────────────────────────────────────────╯
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.signcolumn = "yes"
@@ -22,6 +36,9 @@ vim.o.winborder = "rounded"
 vim.o.clipboard = "unnamedplus"
 -- vim.o.cmdheight = 0
 
+-- ╭──────────────────────────────────────────────╮
+-- │                 Keymaps                      │
+-- ╰──────────────────────────────────────────────╯
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
@@ -30,12 +47,12 @@ map('n', '<leader>w', ':write<cr>')
 map('n', '<leader>q', ':quit<cr>')
 
 -- move lines up or down
+map('n', '<A-k>', ":m .-2<CR>==")
+map('i', '<A-k>', "<esc>:m .-2<CR>==gi")
+map('v', '<A-k>', ":m '<-2<CR>gv=gv")
 map('n', '<A-j>', ":m .+1<CR>==")
 map('i', '<A-j>', "<esc>:m .+1<CR>==gi")
 map('v', '<A-j>', ":m '>+1<CR>gv=gv")
-map('n', '<A-k>', ":m .-2<CR>==")
-map('i', '<A-k>', "<esc>:m .-2<CR>==gi")
-map('v', '<A-k>', ":m '>-2<CR>gv=gv")
 
 -- press jk fast to exit insert mode
 map("i", "jk", "<esc>", opts)
@@ -43,7 +60,7 @@ map("i", "kj", "<esc>", opts)
 map("n", "x", '"_x', opts)
 
 -- select all, copy, save & format
-map("n", "<c-a>", "gg<s-v>g")
+map("n", "<c-a>", "gov<s-g>$")
 map("n", "<c-c>", ":%y+<cr>", opts)
 map({ "i", "n" }, "<C-s>", "<Esc><cmd>w<CR><cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
 
@@ -54,18 +71,22 @@ map("n", "<leader>x", ":bdelete!<cr>", opts)
 
 map({ 'n', 'v', 'x' }, '<leader>y', 'yyp<cr>')
 
-map("n", "<c-j>", function()
-	vim.diagnostic.goto_next()
-end, opts)
+map("n", "<c-j>", function() vim.diagnostic.goto_next() end, opts)
+
+map('n', '<leader>f', ":Pick files<cr>")
+map('n', '<leader>h', ":Pick help<cr>")
+map('n', '<leader>e', ":Oil<cr>")
+map('n', '<leader>lf', vim.lsp.buf.format)
 
 -- keymap for find and replace
-map("n", "<c-h>", function()                                        -- prompt for the word to find
-	local find_word = vim.fn.input("find: ")                    -- prompt for the word to replace
-	local replace_word = vim.fn.input("replace with: ")         -- create the substitute command
-	local cmd = string.format("%%s/%s/%s/gc", find_word, replace_word) -- execute the command
+map("n", "<c-h>", function()
+	local cmd = string.format("%%s/%s/%s/gc", vim.fn.input("find: "), vim.fn.input("replace with: "))
 	vim.cmd(cmd)
 end, { desc = "find and replace a word" })
 
+-- ╭──────────────────────────────────────────────╮
+-- │                 Autocmds                     │
+-- ╰──────────────────────────────────────────────╯
 vim.api.nvim_create_autocmd('lspattach', {
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -75,22 +96,25 @@ vim.api.nvim_create_autocmd('lspattach', {
 	end,
 })
 vim.cmd("set completeopt+=noselect")
-
-require "mini.pick".setup()
-require "nvim-treesitter.configs".setup({ ensure_installed = { "svelte", "typescript", "javascript" }, highlight = { enable = true } })
-require("oil").setup()
-require("bufferline").setup()
-require("lualine").setup()
-require("mason").setup()
-
-map('n', '<leader>f', ":Pick files<cr>")
-map('n', '<leader>h', ":Pick help<cr>")
-map('n', '<leader>e', ":Oil<cr>")
-
-map('n', '<leader>lf', vim.lsp.buf.format)
-vim.lsp.enable({ "lua_ls", "biome", "tinymist", "emmetls" })
-
-require "vague".setup({ transparent = true })
 vim.cmd("colorscheme vague")
 vim.cmd(":hi statusline guibg=none")
 
+vim.lsp.enable({ "lua_ls", "biome", "tinymist", "emmetls" })
+
+
+-- ╭──────────────────────────────────────────────╮
+-- │         Helper: Highlight Function           │
+-- ╰──────────────────────────────────────────────╯
+
+local function highlight(group, opts)
+	vim.api.nvim_set_hl(0, group, opts)
+end
+
+-- Custom highlight for CursorLine
+highlight("CursorLine", { bg = "#1f1f1f" })
+
+-- Make comments italic
+highlight("Comment", { fg = "#5c6370", italic = true })
+
+-- Set normal text color
+highlight("Normal", { fg = "#c0caf5", bg = "#1a1b26" })
