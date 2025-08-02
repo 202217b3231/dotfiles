@@ -1,0 +1,65 @@
+
+#╭──────────────────────────────────────────────╮
+#│              Custom Bash Aliases             │
+#╰──────────────────────────────────────────────╯
+
+# General
+alias cls='clear'
+alias c='clear'
+alias q='exit'
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+alias home='cd ~'
+alias docs='cd ~/Documents'
+alias dl='cd ~/Downloads'
+
+# Directory listing
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias lt='ls -lt'
+alias ltr='ls -ltr'
+
+# Git
+alias g='git'
+alias gs='git status'
+alias ga='git add .'
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git pull'
+alias gb='git branch'
+alias gco='git checkout'
+
+# System
+alias update='sudo apt update && sudo apt upgrade'
+alias htop='htop'
+
+# Docker
+alias d='docker'
+alias dps='docker ps'
+alias dcu='docker compose up'
+alias dcd='docker compose down'
+
+# NPM/Yarn
+alias ni='npm install'
+alias nr='npm run'
+alias nid='npm install --save-dev'
+alias nu='npm update'
+alias ys='yarn start'
+alias yb='yarn build'
+
+# Neovim
+alias v='nvim'
+alias vim='nvim'
+
+# Misc
+alias pingg='ping google.com'
+alias path='echo $PATH'
+alias ip='curl ifconfig.me'
+
+#╭──────────────────────────────────────────────╮
+#╰──────────────────────────────────────────────╯
