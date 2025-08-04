@@ -4,20 +4,28 @@
 vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
-	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/echasnovski/mini.nvim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
-	{ src = "https://github.com/akinsho/bufferline.nvim" },
 	{ src = "https://github.com/chomosuke/typst-preview.nvim" },
 	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
 	{ src = "https://github.com/williamboman/mason.nvim" },
+	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim.git" },
 })
 
 require("nvim-treesitter.configs").setup({ ensure_installed = { "svelte", "typescript", "javascript" }, highlight = { enable = true } })
 require("vague").setup({ transparent = true })
 require("mini.pick").setup()
+require("mini.surround").setup()
+require("mini.files").setup()
+require("mini.tabline").setup()
+require("mini.icons").setup()
+require("mini.pairs").setup()
+require("mini.hipatterns").setup()
+require("mini.notify").setup()
+require("mini.trailspace").setup()
+require("render-markdown").setup()
 require("oil").setup()
-require("bufferline").setup()
 require("lualine").setup()
 require("mason").setup()
 
