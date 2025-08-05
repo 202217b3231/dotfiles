@@ -1,6 +1,6 @@
 [ -n "$PS1" ] && source ~/.bash_profile;
 
-# export PATH="$PATH:/opt/nvim/nvim"
+export PATH="$PATH:/opt/nvim/bin"
 
 eval "$(zoxide init bash)"
 
