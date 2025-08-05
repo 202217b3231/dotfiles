@@ -20,7 +20,6 @@ cgit() {
   local file=""
 
   while getopts ":f:m:b:" opt; do
-		  echo "opt: $opt  OPTARG: $OPTARG"
     case $opt in
       f) file="$OPTARG" ;;
       m) message="$OPTARG" ;;
@@ -30,7 +29,7 @@ cgit() {
   done
 
 
-  # # Check if file is provided
+  # Check if file is provided
   # if [ -z "$file" ]; then
   #   echo "Error: -f <file> is required."
   #   return 1
