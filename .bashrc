@@ -4,9 +4,6 @@ export PATH="$PATH:/opt/nvim/bin"
 
 eval "$(zoxide init bash)"
 
-# config() {
-# /usr/bin/git --git-dir=/home/hj/.cfg/ --work-tree=/home/hj "$@"
-# }
 alias config='/usr/bin/git --git-dir=/home/hj/.cfg/ --work-tree=/home/hj'
 config config status.showUntrackedFiles no
 
@@ -30,10 +27,10 @@ cgit() {
     esac
   done
 
-  # if [[ -z "$file" ]]; then
-  #   echo "Error: -f <file> is required."
-  #   return 1
-  # fi
+  if [[ -z "$file" ]]; then
+    echo "Error: -f <file> is required."
+    return 1
+  fi
 
   shift $((OPTIND -1))
 
