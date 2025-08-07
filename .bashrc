@@ -11,7 +11,6 @@ alias config='/usr/bin/git --git-dir=/home/hj/.cfg/ --work-tree=/home/hj'
 config config status.showUntrackedFiles no
 
 cgit() {
-  OPTIND=1
   if [ $# -eq 0 ]; then
     echo "Usage: cgit -f <file> [-m <message>] [-b <branch>]"
     return
@@ -21,7 +20,8 @@ cgit() {
   local branch="nightly"
   local file=""
 
-  while getopts "f:m:b:" opt; do
+	OPTIND=1
+  while getopts ":f:m:b:" opt; do
     case $opt in
       f) file="$OPTARG" ;;
       m) message="$OPTARG" ;;
