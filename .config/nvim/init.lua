@@ -120,7 +120,7 @@ map({ 'n', 'v', 'x' }, '<leader>y', '"1yy"1p<cr>')
 
 map("n", "<c-j>", function() vim.diagnostic.goto_next() end, opts)
 
-map('n', '<leader>ff', "<cmd>Pick files<cr>")
+map('n', '<leader>ff', "<cmd>lua MiniPick.start({ source = { items = vim.fn.readdir('.') } })<cr>")
 map('n', '<leader>h', "<cmd>Pick help<cr>")
 map('n', '<leader>e', "<cmd>Oil<cr>")
 map('n', '<leader>fe', "<cmd>lua MiniFiles.open()<cr>")
