@@ -36,16 +36,18 @@ cgit() {
   # fi
 
   shift $((OPTIND -1))
-  echo "File: $file, Message: $message, Branch: $branch"
 
-  config add "$file"
 
-  if [ -n "$message" ]; then
-    config commit -m "$message"
-  else
-    config commit -m "Updated $file"
+  if [ -z "$message" ]; then
+	message="Updated $file"
   fi
 
+	echo "📂File: $file"
+	echo "📝Message: $message"
+	echo "🌿Branch: $branch"
+
+	config add "$file" &&
+	config commit -m "$message" &&
   config push origin "$branch"
 }
 
