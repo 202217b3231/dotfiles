@@ -2,15 +2,18 @@
 --│                 Plugins                      │
 --╰──────────────────────────────────────────────╯
 vim.pack.add({
+	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/echasnovski/mini.nvim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
-	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/chomosuke/typst-preview.nvim" },
 	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
-	{ src = "https://github.com/williamboman/mason.nvim" },
+	{ src = "https://github.com/mason-org/mason.nvim" },
+	{ src = "https://github.com/mason-org/mason-lspconfig.nvim" },
+	{ src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim.git" },
+	{ src = "https://github.com/Saghen/blink.cmp" },
 })
 
 require("nvim-treesitter.configs").setup({ ensure_installed = { "svelte", "typescript", "javascript" }, highlight = { enable = true } })
@@ -22,13 +25,37 @@ require("mini.tabline").setup()
 require("mini.icons").setup()
 require("mini.pairs").setup()
 require("mini.hipatterns").setup()
-require("mini.notify").setup()
 require("mini.trailspace").setup()
 require("render-markdown").setup()
 require("oil").setup()
 require("lualine").setup()
 require("mason").setup()
+require("mason-lspconfig").setup()
+require("mason-tool-installer").setup({
+	ensure_installed = { "lua_ls", "stylua", "pyright", "tinymist", "typescript-language-server" }
+})
+require("blink.cmp").setup({
+	version = '1.*'
+})
+local notify = require('mini.notify');
+notify.setup();
+vim.notify = notify.make_notify({
+	ERROR = { duration = 5000 },
+	WARN = { duration = 4000 },
+	INFO = { duration = 3000 },
+})
 
+local capabilities = require('blink.cmp').get_lsp_capabilities()
+vim.lsp.config('lua_ls', {
+
+	settings = {
+		capabilities = capabilities,
+		Lua = { runtime = { version = 'LuaJIT' }, },
+		diagnostics = { globals = { 'vim', 'require' } },
+		workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+		telementry = { enable = false }
+	}
+})
 --╭──────────────────────────────────────────────╮
 --│                 Options                      │
 --╰──────────────────────────────────────────────╯
@@ -37,10 +64,12 @@ vim.o.relativenumber = true
 vim.o.signcolumn = "yes"
 vim.o.termguicolors = true
 vim.o.wrap = false
-vim.o.tabstop = 4
+vim.o.tabstop = 2
 vim.o.swapfile = false
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
+vim.o.undofile = true
+vim.o.incsearch = true
 vim.o.clipboard = "unnamedplus"
 -- vim.o.cmdheight = 0
 
@@ -91,9 +120,10 @@ map({ 'n', 'v', 'x' }, '<leader>y', '"1yy"1p<cr>')
 
 map("n", "<c-j>", function() vim.diagnostic.goto_next() end, opts)
 
-map('n', '<leader>f', "<cmd>Pick files<cr>")
+map('n', '<leader>ff', "<cmd>Pick files<cr>")
 map('n', '<leader>h', "<cmd>Pick help<cr>")
 map('n', '<leader>e', "<cmd>Oil<cr>")
+map('n', '<leader>fe', "<cmd>lua MiniFiles.open()<cr>")
 map('n', '<leader>lf', vim.lsp.buf.format)
 
 -- keymap for find and replace
@@ -101,6 +131,9 @@ map("n", "<c-h>", function()
 	local cmd = string.format("%%s/%s/%s/gc", vim.fn.input("find: "), vim.fn.input("replace with: "))
 	vim.cmd(cmd)
 end, { desc = "find and replace a word" })
+
+map("n", "<leader>fc", "<cmd>e" .. vim.fn.stdpath('config') .. "/init.lua<cr>", opts
+)
 
 --╭──────────────────────────────────────────────╮
 --│                 Autocmds                     │
@@ -149,4 +182,7 @@ highlight("YankHighlight", { bg = "#2d3149", })
 vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
 
 --╭──────────────────────────────────────────────╮
+--╰──────────────────────────────────────────────╯
+--╰──────────────────────────────────────────────╯
+--╰──────────────────────────────────────────────╯
 --╰──────────────────────────────────────────────╯
