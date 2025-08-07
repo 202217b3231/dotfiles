@@ -4,38 +4,36 @@ export PATH="$PATH:/opt/nvim/bin"
 
 eval "$(zoxide init bash)"
 
+# config() {
+# /usr/bin/git --git-dir=/home/hj/.cfg/ --work-tree=/home/hj "$@"
+# }
 alias config='/usr/bin/git --git-dir=/home/hj/.cfg/ --work-tree=/home/hj'
 config config status.showUntrackedFiles no
 
 cgit() {
-  # Show help if no arguments
   if [ $# -eq 0 ]; then
     echo "Usage: cgit -f <file> [-m <message>] [-b <branch>]"
     return
   fi
 
-  # Parse arguments
   local message=""
-  local branch="nightly"  # default branch
+  local branch="nightly"
   local file=""
 
-  while getopts ":f:m:b:" opt; do
+  while getopts "f:m:b:" opt; do
     case $opt in
       f) file="$OPTARG" ;;
       m) message="$OPTARG" ;;
       b) branch="$OPTARG" ;;
-      *) echo "Invalid option: -$OPTARG"; return 1 ;;
+      *) echo "Usage: cgit -f <file> [-m <message>] [-b <branch>]"; return 1 ;;
     esac
   done
 
-
-  # Check if file is provided
-  # if [ -z "$file" ]; then
+  # if [[ -z "$file" ]]; then
   #   echo "Error: -f <file> is required."
   #   return 1
   # fi
 
-  echo "File: $file, Message: $message, Branch: $branch"
   shift $((OPTIND -1))
   echo "File: $file, Message: $message, Branch: $branch"
 
@@ -49,3 +47,4 @@ cgit() {
 
   config push origin "$branch"
 }
+
