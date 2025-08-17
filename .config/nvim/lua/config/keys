@@ -1,0 +1,101 @@
+
+--╭──────────────────────────────────────────────╮
+--│                 Keymaps                      │
+--╰──────────────────────────────────────────────╯
+
+vim.g.mapleader = " "
+
+local map = vim.keymap.set
+local opts = { noremap = true, silent = true }
+
+map('n', '<leader>o', '<cmd>update<cr> :source<cr>')
+map('n', '<leader>w', '<cmd>write<cr>')
+map('n', '<leader>q', '<cmd>quit<cr>')
+
+-- Keep search results in center
+map("n", "n", "nzzzv", opts)
+map("n", "N", "Nzzzv", opts)
+
+-- Keep cursor centered when scrolling
+map("n", "<C-d>", "<C-d>zz", opts)
+map("n", "<C-u>", "<C-u>zz", opts)
+
+-- move lines up or down
+map('n', '<A-k>', ":m .-1<CR>==", opts)
+map('i', '<A-k>', "<esc>:m .-1<CR>==gi", opts)
+map('v', '<A-k>', ":m '<-1<CR>gv=gv", opts)
+map('n', '<A-j>', ":m .+2<CR>==", opts)
+map('i', '<A-j>', "<esc>:m .+2<CR>==gi", opts)
+map('v', '<A-j>', ":m '>+2<CR>gv=gv", opts)
+
+-- jk to exit insert mode
+map("i", "jk", "<esc>", opts)
+map("i", "kj", "<esc>", opts)
+
+map({ "n", "v" }, "x", '"_x', opts)
+map({ "n", "v" }, "c", '"_c', opts)
+
+-- Esc to remove highlight
+map("n", "<esc>", '<cmd>noh<cr>', opts)
+
+-- select all, copy, save & format
+map("n", "<c-a>", "gov<s-g>$")
+map("n", "<c-c>", "<cmd>%y+<cr>", opts)
+map({ "i", "n" }, "<C-s>", "<Esc><cmd>w<CR><cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
+
+-- buffers
+map("n", "<tab>", "<cmd>bnext<cr>", opts)
+map("n", "<s-tab>", "<cmd>bprevious<cr>", opts)
+map("n", "<leader>x", "<cmd>bdelete!<cr>", opts)
+
+map({ 'n' }, '<leader>y', 'm`"1yy"0p``', opts)
+map({ 'v', 'x' }, '<leader>y', '"1y`>"0p', opts)
+
+map("n", "<c-j>", function() vim.diagnostic.jump({ count = 2 }) end, opts)
+
+map('n', '<leader><leader>', "<cmd>lua Snacks.picker.smart()<cr>", opts)
+map('n', '<leader>h', "<cmd>Pick help<cr>")
+map('n', '<leader>e', "<cmd>lua Snacks.explorer()<cr>")
+map('n', '<leader>fe', "<cmd>lua MiniFiles.open()<cr>")
+map('n', '<leader>lf', vim.lsp.buf.format, { desc = "Format" })
+
+-- keymap for find and replace
+map("n", "<leader>fr", function()
+	local cmd = string.format("%%s/%s/%s/gc", vim.fn.input("find: "), vim.fn.input("replace with: "))
+	vim.cmd(cmd)
+end, { desc = "find and replace a word" })
+
+map("n", "<leader>fc", "<cmd>e" .. vim.fn.stdpath('config') .. "<cr>", opts)
+
+--╭──────────────────────────────────────────────╮
+--│                 Autocmds                     │
+--╰──────────────────────────────────────────────╯
+vim.cmd("set completeopt+=noselect")
+vim.cmd("colorscheme vague")
+vim.cmd(":hi statusline guibg=none")
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	pattern = "*",
+	callback = function()
+		vim.highlight.on_yank({ higroup = "YankHighlight", timeout = 200, })
+	end,
+})
+
+--╭──────────────────────────────────────────────╮
+--│         Helper: Highlight Function           │
+--╰──────────────────────────────────────────────╯
+
+local function highlight(group, opts)
+	vim.api.nvim_set_hl(0, group, opts)
+end
+
+-- Custom highlight for CursorLine
+highlight("CursorLine", { bg = "#1f1f1f" })
+
+-- Make comments italic
+highlight("Comment", { fg = "#5c6370", italic = true })
+
+-- Set normal text color
+highlight("Normal", { fg = "#c0caf5", bg = "#1a1b26" })
+
+highlight("YankHighlight", { bg = "#2d3149", })
