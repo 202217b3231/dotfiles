@@ -1,76 +1,106 @@
-local map = vim.keymap.set
-local opts = { noremap = true, silent = true }
+vim.g.mapleader = " "
 
--- Save and format
-map("n", "<C-s>", function()
-	vim.cmd("w")
-	vim.lsp.buf.format({ async = true })
-end, opts)
-map({ "i", "n" }, "<C-s>", "<Esc><cmd>w<CR><cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
+local utils = require("config.autocmds")
 
--- Select all
-map("n", "<C-a>", "ggVG", opts)
+local keymaps = {
+	n = {
 
--- Ctrl+c to copy all content
-map("n", "<C-c>", ":%y+<CR>", opts)
+		["<esc>"] = "<cmd>noh<cr>",
 
--- Close current buffer
-map("n", "<C-w>", "<cmd>bd<CR>", opts)
+		["<leader>o"] = "<cmd>update<cr> :source<cr>",
+		["<leader>w"] = "<cmd>write<cr>",
+		["<leader>q"] = "<cmd>quit<cr>",
 
--- Close all other buffers
-map("n", "<leader>wa", ":%bd|e#|bd#<CR>", opts)
+		-- search + scroll
+		["n"] = "nzzzv",
+		["N"] = "Nzzzv",
+		["<C-d>"] = "<C-d>zz",
+		["<C-u>"] = "<C-u>zz",
 
--- Find and Replace (opens Telescope live grep if installed, or use command mode)
-map("n", "<leader>h", ":%s//g<Left><Left>", opts)
+		-- move lines
+		["<A-k>"] = ":m .-2<CR>==",
+		["<A-j>"] = ":m .+1<CR>==",
 
--- Easy escape in insert mode
-map("i", "jk", "<Esc>", opts)
-map("i", "kj", "<Esc>", opts)
+		-- select all / copy
+		["<c-a>"] = "gov<s-g>$",
+		["<c-c>"] = "<cmd>%y+<cr>",
+		["<C-s>"] = "<Esc><cmd>w<CR><cmd>lua vim.lsp.buf.format({ async = true })<CR>",
 
--- Telescope keymaps
-map("n", "<leader>f", "<cmd>Telescope find_files<cr>", opts)
-map("n", "<leader>gr", "<cmd>Telescope live_grep<cr>", opts)
-map("n", "<leader>b", "<cmd>Telescope buffers<cr>", opts)
-map("n", "<leader>d", "<cmd>Telescope diagnostics<cr>", opts)
+		["x"] = '"_x',
 
--- Neo-tree (file explorer)
-map("n", "<leader>e", "<cmd>Neotree toggle<cr>", opts)
+		-- buffers
+		["<tab>"] = "<cmd>bnext<cr>",
+		["<s-tab>"] = "<cmd>bprevious<cr>",
+		["<leader>x"] = "<cmd>bdelete!<cr>",
 
--- LSP
-map("n", "gd", vim.lsp.buf.definition, opts)
-map("n", "K", vim.lsp.buf.hover, opts)
-map("n", "gr", vim.lsp.buf.references, opts)
-map("n", "<leader>rn", vim.lsp.buf.rename, opts)
-map("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-map("n", "<leader>lf", function()
-	vim.lsp.buf.format({ async = true })
-end, opts)
+		-- yank
+		["<leader>y"] = 'm`"0yy"0p``',
 
--- Select all
-map("n", "<C-a>", "gg<S-v>G")
--- Buffers
-map("n", "<Tab>", ":bnext<CR>", opts)
-map("n", "<S-Tab>", ":bprevious<CR>", opts)
-map("n", "<leader>x", ":bdelete!<CR>", opts)
+		-- diagnostics
+		["<c-j>"] = {
+			function()
+				vim.diagnostic.jump({ count = 2 })
+			end,
+		},
 
--- Diagnostics
-map("n", "[d", vim.diagnostic.goto_prev, opts)
-map("n", "]d", vim.diagnostic.goto_next, opts)
+		-- snacks / mini / lsp
+		["<leader><leader>"] = "<cmd>lua Snacks.picker.smart()<cr>",
+		["<leader>h"] = "<cmd>Pick help<cr>",
+		["<leader>e"] = "<cmd>lua Snacks.explorer()<cr>",
+		["<leader>sp"] = "<cmd>lua Snacks.picker()<cr>",
+		["<leader>sw"] = {
+			function()
+				Snacks.picker.grep()
+			end,
+			{ desc = "Grep Word" },
+		},
+		["<leader>fe"] = "<cmd>lua MiniFiles.open()<cr>",
+		["<leader>lf"] = { vim.lsp.buf.format, { desc = "Format" } },
 
--- Terminal
-map("n", "<leader>t", "<cmd>split | terminal<cr>", opts)
+		-- find & replace
+		["<leader>fr"] = {
+			function()
+				local cmd = string.format("%%s/%s/%s/gc", vim.fn.input("find: "), vim.fn.input("replace with: "))
+				vim.cmd(cmd)
+			end,
+			{ desc = "Find and replace a word" },
+		},
 
--- Write / Quit
-map("n", "<leader>w", "<cmd>w<cr>", opts)
-map("n", "<leader>q", "<cmd>q<cr>", opts)
+		["<leader>fc"] = "<cmd>e" .. vim.fn.stdpath("config") .. "<cr>",
+	},
 
-map("n", "<leader>gg", "<cmd>LazyGit<CR>", opts)
+	i = {
+		["<A-k>"] = "<esc>:m .-2<CR>==gi",
+		["<A-j>"] = "<esc>:m .+1<CR>==gi",
 
-map("n", "<leader>de", function()
-	vim.diagnostic.open_float(nil, { focusable = true })
-end, { desc = "Show line diagnostic" })
+		["jk"] = "<esc>",
+		["kj"] = "<esc>",
+		["<C-s>"] = "<Esc><cmd>w<CR><cmd>lua vim.lsp.buf.format({ async = true })<CR>",
+	},
 
-map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Move to window below" })
-map("n", "<C-k>", "<C-w>k", { desc = "Move to window above" })
-map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+	v = {
+		["<A-k>"] = ":m '<-2<CR>gv=gv",
+		["<A-j>"] = ":m '>+1<CR>gv=gv",
+		["<leader>y"] = '"1y`>"0p',
+
+		["x"] = '"_x',
+		["c"] = '"_c',
+	},
+
+	x = {
+		["<leader>y"] = '"1y`>"0p',
+	},
+
+	all = {},
+}
+
+utils.apply_keymaps({
+	n = keymaps.n,
+	i = keymaps.i,
+	v = keymaps.v,
+	x = keymaps.x,
+})
+
+for _, mode in ipairs({ "n", "i", "v" }) do
+	utils.apply_keymaps({ [mode] = keymaps.all })
+end
