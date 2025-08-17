@@ -1,6 +1,7 @@
 [ -n "$PS1" ] && source ~/.bash_profile
 
 export PATH="$PATH:/opt/nvim/bin"
+alias nv='/opt/nvim/bin/nvim'
 
 eval "$(zoxide init bash)"
 
@@ -9,12 +10,12 @@ config config status.showUntrackedFiles no
 
 cgit() {
 	if [ $# -eq 0 ]; then
-		echo "Usage: cgit -f <file> [-m <message>] [-b <branch>]"
+		echo "Usage: cgit -f <file> [-m <message>] [-b $br]"
 		return
 	fi
 
 	local message=""
-	local branch="nightly"
+	local branch=""
 	local file=""
 
 	OPTIND=1
@@ -39,6 +40,10 @@ cgit() {
 
 	if [ -z "$message" ]; then
 		message="Updated $file"
+	fi
+
+	if [ -z "$branch" ]; then
+		branch=$(config rev-parse --abbrev-ref HEAD)
 	fi
 
 	echo "📂File: $file"
