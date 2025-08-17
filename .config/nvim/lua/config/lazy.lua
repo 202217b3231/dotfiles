@@ -18,6 +18,6 @@ require("lazy").setup({
 		{ import = "lazyvim.plugins.extras.lang.vue" },
 		{ import = "lazyvim.plugins.extras.lang.tailwind" },
 		{ import = "lazyvim.plugins.extras.linting.eslint" },
-		-- { import = "plugins" },
+		{ import = "plugins" },
 	},
 })
