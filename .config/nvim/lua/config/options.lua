@@ -21,18 +21,8 @@ o.ignorecase = true
 o.smartcase = true
 o.clipboard = "unnamedplus"
 
--- vim.notify = require("notify")
-
 vim.diagnostic.config({
-	virtual_text = true,
-	signs = true,
-	underline = true,
-	update_in_insert = true,
-	float = {
-		border = "rounded",
-		focusable = true,
-		-- source = "always",
-		header = "",
-		prefix = "",
-	},
+  virtual_text = false,
+  signs = true,
+  underline = true,
 })
