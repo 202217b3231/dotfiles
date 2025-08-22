@@ -32,7 +32,7 @@ return {
       sections = {
         lualine_a = {
           function()
-            return vim.fn.mode():sub(1, 1):upper()
+            return vim.fn.mode():upper()
           end,
         },
         lualine_c = {
@@ -47,7 +47,11 @@ return {
           },
           { LazyVim.lualine.pretty_path() },
         },
-        lualine_x = { "searchcount" },
+        lualine_x = {
+          function()
+            return tostring(vim.fn.line("$")) .. " "
+          end,
+        },
         lualine_y = {
           { "location", padding = { left = 0, right = 1 } },
         },
