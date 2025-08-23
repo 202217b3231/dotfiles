@@ -17,12 +17,19 @@ alias home='cd ~'
 alias docs='cd ~/Documents'
 alias dl='cd ~/Downloads'
 
-# Directory listing
-alias l='ls -CF'
-alias la='ls -A'
-alias ll='ls -alF'
-alias lt='ls -lt'
-alias ltr='ls -ltr'
+if command -v exa >/dev/null 2>&1; then
+  alias l='exa --classify --icons'
+  alias la='exa -a --icons'
+  alias ll='exa -alF --icons'
+  alias lt='exa -lT --icons'
+  alias tree='exa -T --icons'
+else
+  alias l='ls -CF'
+  alias la='ls -A'
+  alias ll='ls -alF'
+  alias lt='ls -lt'
+  alias ltr='ls -ltr'
+fi
 
 # Git
 alias g='git'
