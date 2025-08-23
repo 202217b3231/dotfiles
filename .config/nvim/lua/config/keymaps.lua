@@ -56,6 +56,7 @@ local keymaps = {
     },
     ["<leader>fe"] = "<cmd>lua MiniFiles.open()<cr>",
     ["<leader>lf"] = { vim.lsp.buf.format, { desc = "Format" } },
+    ["<leader>li"] = { "g=G``", { desc = "Format" } },
 
     -- find & replace
     ["<leader>fr"] = {
